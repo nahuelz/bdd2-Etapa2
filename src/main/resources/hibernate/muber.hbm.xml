@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+		<hibernate-mapping package="bd2.Muber.model">
+			<class name="Muber" table="MUBER">
+				<id name="idMuber" column="ID_MUBER" type="int">
+					<generator class="native" />
+				</id>
+				
+				<set name="usuarios" cascade="all">
+					<key column="ID_MUBER" />
+					<one-to-many class="Usuario" />
+				</set>
+				
+				<set name="viajes" cascade="all">
+					<key column="ID_MUBER"/>
+					<one-to-many class="Viaje" />
+				</set>	
+			</class>
+		</hibernate-mapping>

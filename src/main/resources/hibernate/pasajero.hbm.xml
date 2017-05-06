@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+		<hibernate-mapping package="bd2.Muber.model">
+			<class name="Pasajero" table="PASAJERO">
+				<id name="idPasajero" column="ID_PASAJERO">
+					<generator class="native" />
+				</id>
+				<property name="creditos"></property>
+			</class>
+		</hibernate-mapping>
