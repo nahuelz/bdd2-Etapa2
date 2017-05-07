@@ -41,6 +41,7 @@ public class Conductor extends Usuario {
 	}
 	
 	public float puntajePromedio() {
+		if (this.getViajes().isEmpty()) return 0;
 		float promedio = 0;
 		Set<Viaje> viajes = this.getViajes();
 		for (Viaje viaje : viajes ) {

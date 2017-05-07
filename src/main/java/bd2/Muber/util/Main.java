@@ -1,6 +1,7 @@
 package bd2.Muber.util;
 
 import java.util.Date;
+import java.util.Calendar;
 
 import org.hibernate.Session;  
 import org.hibernate.SessionFactory;  
@@ -33,11 +34,14 @@ public class Main {
 		
 		SessionFactory sf = cfg.buildSessionFactory();
 		
-		Conductor conductor = new Conductor("Roberto", "123456", new Date(), new Date());
+		Calendar c = Calendar.getInstance();
+		c.set(2018, 0, 1);
+		Conductor conductor = new Conductor("Roberto", "123456", new Date(), c.getTime());
 		
-		Viaje viaje = new Viaje("La Plata", "Tres Arroyos", 900, 10, new Date(), conductor);
+		c.set(2017, 6, 5);
+		Viaje viaje = new Viaje("La Plata", "Tres Arroyos", 900, 10, c.getTime(), conductor);
 
-		Pasajero pasajero1 = new Pasajero("German", "123456", new Date(), 1500);
+		Pasajero pasajero1 = new Pasajero("Germán", "123456", new Date(), 1500);
 		
 		Pasajero pasajero2 = new Pasajero("Alicia", "123456", new Date(), 1500);
 		
@@ -47,6 +51,8 @@ public class Main {
 		viaje.addPasajero(pasajero2);
 		viaje.addPasajero(pasajero3);
 		
+		viaje.cerrar();
+		viaje.finalizar();
 		
 		Comentario comentario1 = new Comentario(5, "Muy buen conductor", pasajero1);
 		viaje.addComentario(comentario1);
@@ -56,11 +62,6 @@ public class Main {
 		
 		Comentario comentario3 = new Comentario(4, "Buen conductor", pasajero3);
 		viaje.addComentario(comentario3);
-		
-		float costo = viaje.costoPorPasajero();
-		pasajero1.descontarCredito(costo);
-		pasajero2.descontarCredito(costo);
-		pasajero3.descontarCredito(costo);
 		
 		Muber muber = new Muber();
 		muber.addViaje(viaje);
@@ -74,7 +75,6 @@ public class Main {
 		Transaction tx = session.beginTransaction();
 		session.persist(muber);
 		tx.commit();
-		
 		 	
 	}
 

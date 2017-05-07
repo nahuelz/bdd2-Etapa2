@@ -16,7 +16,7 @@
 				<property name="costoTotal"></property>
 				<property name="fecha"></property>
 				<property name="cantidadMaximaPasajeros"></property>
-				<property name="finalizado"></property>
+				<property name="estado"></property>
 				
 				<set name="pasajeros" table="VIAJE_PASAJERO" cascade="all">
 					<key column="ID_VIAJE"/>

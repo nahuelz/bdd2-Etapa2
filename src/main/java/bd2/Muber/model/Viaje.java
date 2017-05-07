@@ -14,23 +14,26 @@ public class Viaje {
 	private Conductor conductor;
 	private Set<Pasajero> pasajeros;
 	private Set<Comentario> comentarios;
-	private boolean finalizado;
+	private char estado;
 
 	public Viaje() {
 		this.pasajeros = new HashSet<Pasajero>();
 		this.comentarios = new HashSet<Comentario>();
-		this.finalizado = false;
+		this.estado = 'A';
 	}
 	
 	public Viaje(String origen, String destino, int costoTotal, int pasajeros, Date fecha, Conductor conductor){
 		this();
-		this.setOrigen(origen);
-		this.setDestino(destino);
-		this.setCantidadMaximaPasajeros(pasajeros);
-		this.setFecha(fecha);
-		this.setCostoTotal(costoTotal);
-		this.setConductor(conductor);
-		conductor.addViaje(this);
+		if (conductor.getFechaVencimientoLic().after(fecha)) {
+			this.setOrigen(origen);
+			this.setDestino(destino);
+			this.setCantidadMaximaPasajeros(pasajeros);
+			this.setFecha(fecha);
+			this.setCostoTotal(costoTotal);
+			this.setConductor(conductor);
+			conductor.addViaje(this);
+		}
+		else this.finalizar();
 	}
 	
 	public int getIdViaje() {
@@ -96,18 +99,18 @@ public class Viaje {
 	
 	public void addPasajero (Pasajero pasajero) {
 		if((pasajeros.size() < this.getCantidadMaximaPasajeros()) && 
-				(this.puedeViajar(pasajero))) {
+				this.puedeViajar(pasajero) && this.isAbierto()) {
 			this.pasajeros.add(pasajero);
 			pasajero.addViaje(this);
 		}
 	}
 	
-	public boolean getFinalizado() {
-		return finalizado;
+	public char getEstado() {
+		return estado;
 	}
 	
-	private void setFinalizado(boolean finalizado) {
-		this.finalizado = finalizado;
+	private void setEstado(char estado) {
+		this.estado = estado;
 	}
 	
 	public float costoPorPasajero() {
@@ -115,11 +118,30 @@ public class Viaje {
 	}
 	
 	private boolean puedeViajar(Pasajero pasajero) {
-		return (pasajero.getCreditos() >= this.costoTotal / (this.pasajeros.size() + 1));
+		return (pasajero.getCreditos() >= this.costoTotal / this.cantidadMaximaPasajeros);
 	}
 	
 	public void finalizar() {
-		this.setFinalizado(true);
+		this.setEstado('F');
+		for(Pasajero p : this.pasajeros) {
+			p.descontarCredito(this.costoPorPasajero());
+		}
+	}
+	
+	public void cerrar() {
+		this.setEstado('C');
+	}
+	
+	public boolean isAbierto() {
+		return estado == 'A';
+	}
+	
+	public boolean isCerrado() {
+		return estado == 'C';
+	}
+	
+	public boolean isFinalizado() {
+		return estado == 'F';
 	}
 	
 	public void addComentario(Comentario comentario) {

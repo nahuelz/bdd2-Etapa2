@@ -1,6 +1,5 @@
 package bd2.Muber.model;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -119,7 +118,7 @@ public class Muber {
 		int abiertos = 0;
 		System.out.format("%-5s%-15s%-15s%-10s%n", "ID", "Origen", "Destino", "Fecha");
 		for( Viaje viaje : viajes ) {
-			if (!viaje.getFinalizado()) {
+			if (viaje.isAbierto()) {
 				abiertos++;
 				System.out.format("%-5s%-15s%-15s%-10tc%n", viaje.getIdViaje(), viaje.getOrigen(), viaje.getDestino(), viaje.getFecha());
 			}
@@ -133,7 +132,7 @@ public class Muber {
 		int abiertos = 0;
 		System.out.format("%-5s%-15s%-15s%-10s%n", "ID", "Origen", "Destino", "Fecha");
 		for( Viaje viaje : viajes ) {
-			if (!viaje.getFinalizado()) {
+			if (viaje.isAbierto()) {
 				abiertos++;
 				System.out.format("%-5s%-15s%-15s%-10tc%n", viaje.getIdViaje(), viaje.getOrigen(), viaje.getDestino(), viaje.getFecha());
 				viajesA.add(viaje);

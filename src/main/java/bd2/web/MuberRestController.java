@@ -85,7 +85,7 @@ public class MuberRestController {
 		Set<Viaje> viajes;
 		viajes = new HashSet<Viaje>();
 		viajes = muber.obtenerViajesAbiertos();
-		aMap.put("Conductores: ", viajes);
+		aMap.put("Viajes abiertos: ", viajes);
 		tx.rollback();
 		return new Gson().toJson(aMap);
 		
