@@ -69,10 +69,10 @@ public class Muber {
 		if (!usuarios.isEmpty()) {
 			for( Usuario user : usuarios ) {
 				if (user.isPasajero()) {
-					Pasajero p1 = (Pasajero) user;
-					Pasajero p = new Pasajero (p1.getNombre(), p1.getPassword(), p1.getFechaIngreso(), (int)p1.getCreditos());
-					p.setIdPasajero(p1.getIdUsuario());
-					p.setIdUsuario(p1.getIdUsuario());
+					Pasajero p = (Pasajero) user;
+					//Pasajero p1 = new Pasajero (p.getNombre(), p.getPassword(), p.getFechaIngreso(), (int)p.getCreditos());
+					//p1.setIdPasajero(p.getIdUsuario());
+					//p1.setIdUsuario(p.getIdUsuario());
 					pasajeros.add(p);
 				}
 			}
@@ -100,10 +100,10 @@ public class Muber {
 		if (!usuarios.isEmpty()) {
 			for( Usuario user : usuarios ) {
 				if (user.isConductor()) {
-					Conductor c1 = (Conductor) user;
-					Conductor c = new Conductor (c1.getNombre(), c1.getPassword(), c1.getFechaIngreso() , c1.getFechaVencimientoLic());
-					c.setIdConductor(c1.getIdUsuario());
-					c.setIdUsuario(c1.getIdUsuario());
+					Conductor c = (Conductor) user;
+					//Conductor c1 = new Conductor (c.getNombre(), c.getPassword(), c.getFechaIngreso() , c.getFechaVencimientoLic());
+					//c1.setIdConductor(c.getIdUsuario());
+					//c1.setIdUsuario(c.getIdUsuario());
 					conductores.add(c);
 				}
 			}
@@ -127,20 +127,13 @@ public class Muber {
 	}
 	
 	public Set<Viaje> obtenerViajesAbiertos() {
-		Set<Viaje> viajes = this.getViajes();
-		Set<Viaje> viajesA = new HashSet<Viaje>();
-		int abiertos = 0;
-		System.out.format("%-5s%-15s%-15s%-10s%n", "ID", "Origen", "Destino", "Fecha");
-		for( Viaje viaje : viajes ) {
-			if (viaje.isAbierto()) {
-				abiertos++;
-				System.out.format("%-5s%-15s%-15s%-10tc%n", viaje.getIdViaje(), viaje.getOrigen(), viaje.getDestino(), viaje.getFecha());
-				viajesA.add(viaje);
-				System.out.println(viaje);
+		Set<Viaje> viajes = new HashSet<Viaje>();
+		for( Viaje viaje : this.getViajes() ) {
+			if (!viaje.isAbierto()) {
+				viajes.add(viaje);
 			}
 		}
-		if (abiertos == 0) System.out.println("No hay viajes abiertos");
-		return(viajesA);
+		return(viajes);
 	}
 	
 	private void printViajes(Conductor conductor) {
