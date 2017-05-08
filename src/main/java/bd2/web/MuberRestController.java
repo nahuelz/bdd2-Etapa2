@@ -66,6 +66,7 @@ public class MuberRestController {
 			mapAtributos.put("fechaIngreso", p.getFechaIngreso());
 			mapPasajeros.put(p.getIdUsuario(), new LinkedHashMap<String, Object>(mapAtributos));
 		}
+		mapAll.put("result", "OK");
 		mapAll.put("pasajeros", mapPasajeros);
 		return new Gson().toJson(mapAll);
 		
@@ -90,6 +91,7 @@ public class MuberRestController {
 			mapAtributos.put("fechaIngreso", c.getFechaIngreso());
 			mapConductores.put(c.getIdUsuario(), new LinkedHashMap<String, Object>(mapAtributos));
 		}
+		mapAll.put("result", "OK");
 		mapAll.put("conductores", mapConductores);
 		return new Gson().toJson(mapAll);
 		
@@ -117,7 +119,47 @@ public class MuberRestController {
 			mapAtributos.put("nombreConductor", v.getConductor().getNombre());
 			mapViajes.put(v.getIdViaje(), new LinkedHashMap<String, Object>(mapAtributos));
 		}
+		mapAll.put("result", "OK");
 		mapAll.put("viajesAbiertos", mapViajes);
+		return new Gson().toJson(mapAll);
+		
+	}
+	
+	@RequestMapping(value = "/conductores/detalle", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	public String conductor(Integer conductorId) {
+		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
+		Map<Integer, Object> mapViajes = new LinkedHashMap<Integer, Object>();
+		Map<String, Object> mapConductor = new LinkedHashMap<String, Object>();
+		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
+		Session session = this.getSession();
+		Transaction tx = session.beginTransaction();
+		Muber muber = (Muber) session.createQuery("from Muber").uniqueResult();
+		if(conductorId == null) conductorId = 0;
+		Conductor conductor = muber.obtenerInfoConductor(conductorId);
+		if (conductor.getIdUsuario() == 0) mapAll.put("result", "Not found");
+		else {
+			mapConductor.put("idUsuario", conductor.getIdUsuario());
+			mapConductor.put("nombre", conductor.getNombre());
+			mapConductor.put("password", conductor.getPassword());
+			mapConductor.put("fechaVencimientoLic", conductor.getFechaVencimientoLic());
+			mapConductor.put("fechaIngreso", conductor.getFechaIngreso());
+			tx.rollback();
+			for (Viaje v : conductor.getViajes()) {
+				mapAtributos.put("origen", v.getOrigen());
+				mapAtributos.put("destino", v.getDestino());
+				mapAtributos.put("costoTotal", v.getCostoTotal());
+				mapAtributos.put("fecha", v.getFecha());
+				mapAtributos.put("cantidadMaximaPasajeros", v.getCantidadMaximaPasajeros());
+				mapAtributos.put("estado", v.getEstado());
+				mapViajes.put(v.getIdViaje(), new LinkedHashMap<String, Object>(mapAtributos));
+			}
+			mapConductor.put("viajes", mapViajes);
+		}
+		if (conductor.getIdUsuario() != 0) {
+			mapAll.put("result", "OK");
+			mapAll.put("conductor", mapConductor);
+		}
+		else mapAll.put("result", "Not found");
 		return new Gson().toJson(mapAll);
 		
 	}

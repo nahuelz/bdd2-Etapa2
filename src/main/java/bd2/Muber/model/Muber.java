@@ -129,7 +129,7 @@ public class Muber {
 	public Set<Viaje> obtenerViajesAbiertos() {
 		Set<Viaje> viajes = new HashSet<Viaje>();
 		for( Viaje viaje : this.getViajes() ) {
-			if (!viaje.isAbierto()) {
+			if (viaje.isAbierto()) {
 				viajes.add(viaje);
 			}
 		}
@@ -161,6 +161,18 @@ public class Muber {
 			}
 		}
 		if (!ok) System.out.println("El conductor no existe");
+	}
+	
+	public Conductor obtenerInfoConductor(int idConductor) {
+		Conductor conductor = new Conductor();
+		for( Usuario usuario : this.getUsuarios() ) {
+			if ((usuario.getIdUsuario() == idConductor) && (usuario.isConductor())) {
+				conductor = (Conductor) usuario;
+				for (Viaje v : conductor.getViajes());
+				break;
+			}
+		}
+		return conductor;
 	}
 	
 }
