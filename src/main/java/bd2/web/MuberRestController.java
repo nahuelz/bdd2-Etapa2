@@ -178,16 +178,22 @@ public class MuberRestController {
 			Muber muber = (Muber) session.createQuery("from Muber").uniqueResult();
 			Conductor conductor = muber.obtenerInfoConductor(conductorId);
 			if (conductor != null){
-				Viaje viaje = new Viaje (origen, destino, costoTotal, cantidadPasajeros, new Date(), conductor);
-				muber.addViaje(viaje);
-				tx.commit();
-				
+				if (conductor.getFechaVencimientoLic().after(new Date())) {
+					Viaje viaje = new Viaje (origen, destino, costoTotal, cantidadPasajeros, new Date(), conductor);
+					muber.addViaje(viaje);
+					tx.commit();
+					
+					Map<String, Object> aMap = new HashMap<String, Object>();
+					aMap.put("result", "OK");
+					return new Gson().toJson(aMap);
+				}else{
+					Map<String, Object> aMap = new HashMap<String, Object>();
+					aMap.put("result", "Error, id conductor incorrecto");
+					return new Gson().toJson(aMap);
+				}
+			} else {
 				Map<String, Object> aMap = new HashMap<String, Object>();
-				aMap.put("result", "OK");
-				return new Gson().toJson(aMap);
-			}else{
-				Map<String, Object> aMap = new HashMap<String, Object>();
-				aMap.put("result", "Error, id conductor incorrecto");
+				aMap.put("result", "Error, el conductor tiene la licencia vencida");
 				return new Gson().toJson(aMap);
 			}
 		}else{
