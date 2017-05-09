@@ -158,7 +158,7 @@ public class Muber {
 	}
 	
 	public Conductor obtenerInfoConductor(int idConductor) {
-		Conductor conductor = new Conductor();
+		Conductor conductor = null;
 		for( Usuario usuario : this.getUsuarios() ) {
 			if ((usuario.getIdUsuario() == idConductor) && (usuario.isConductor())) {
 				conductor = (Conductor) usuario;

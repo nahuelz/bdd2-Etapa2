@@ -170,19 +170,30 @@ public class MuberRestController {
 		
 		/*
 		 * Ejemplo URL:
-		 * http://localhost:8080/MuberRESTful/rest/services/viajes/nuevo?origen=La%20Plata&destino=Olavarria&conductorId=2&costoTotal=500&cantidadPasajeros=4
+		 * http://localhost:8080/MuberRESTful/rest/services/viajes/nuevo?origen=La Plata&destino=Olavarria&conductorId=2&costoTotal=500&cantidadPasajeros=4
 		 */
-		
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		Muber muber = (Muber) session.createQuery("from Muber").uniqueResult();
-		Conductor conductor = muber.obtenerInfoConductor(conductorId);
-		Viaje viaje = new Viaje (origen, destino, costoTotal, cantidadPasajeros, new Date(), conductor);
-		muber.addViaje(viaje);
-		tx.commit();
-		
-		Map<String, Object> aMap = new HashMap<String, Object>();
-		aMap.put("result", "OK");
-		return new Gson().toJson(aMap);
+		if ( (origen != null) & (destino != null) & (conductorId != null) & (costoTotal != null) & (cantidadPasajeros != null) ){
+			Session session = this.getSession();
+			Transaction tx = session.beginTransaction();
+			Muber muber = (Muber) session.createQuery("from Muber").uniqueResult();
+			Conductor conductor = muber.obtenerInfoConductor(conductorId);
+			if (conductor != null){
+				Viaje viaje = new Viaje (origen, destino, costoTotal, cantidadPasajeros, new Date(), conductor);
+				muber.addViaje(viaje);
+				tx.commit();
+				
+				Map<String, Object> aMap = new HashMap<String, Object>();
+				aMap.put("result", "OK");
+				return new Gson().toJson(aMap);
+			}else{
+				Map<String, Object> aMap = new HashMap<String, Object>();
+				aMap.put("result", "Error, id conductor incorrecto");
+				return new Gson().toJson(aMap);
+			}
+		}else{
+			Map<String, Object> aMap = new HashMap<String, Object>();
+			aMap.put("result", "Error, parametros incorrectos");
+			return new Gson().toJson(aMap);
+		}
 	}
 }
