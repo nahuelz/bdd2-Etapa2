@@ -1,6 +1,7 @@
 package bd2.web;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -163,5 +164,25 @@ public class MuberRestController {
 		return new Gson().toJson(mapAll);
 		
 	}
-	 
+	
+	@RequestMapping(value = "/viajes/nuevo", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	public String nuevo(String origen, String destino, Integer conductorId, Integer costoTotal, Integer cantidadPasajeros) {
+		
+		/*
+		 * Ejemplo URL:
+		 * http://localhost:8080/MuberRESTful/rest/services/viajes/nuevo?origen=La%20Plata&destino=Olavarria&conductorId=2&costoTotal=500&cantidadPasajeros=4
+		 */
+		
+		Session session = this.getSession();
+		Transaction tx = session.beginTransaction();
+		Muber muber = (Muber) session.createQuery("from Muber").uniqueResult();
+		Conductor conductor = muber.obtenerInfoConductor(conductorId);
+		Viaje viaje = new Viaje (origen, destino, costoTotal, cantidadPasajeros, new Date(), conductor);
+		muber.addViaje(viaje);
+		tx.commit();
+		
+		Map<String, Object> aMap = new HashMap<String, Object>();
+		aMap.put("result", "OK");
+		return new Gson().toJson(aMap);
+	}
 }

@@ -70,9 +70,6 @@ public class Muber {
 			for( Usuario user : usuarios ) {
 				if (user.isPasajero()) {
 					Pasajero p = (Pasajero) user;
-					//Pasajero p1 = new Pasajero (p.getNombre(), p.getPassword(), p.getFechaIngreso(), (int)p.getCreditos());
-					//p1.setIdPasajero(p.getIdUsuario());
-					//p1.setIdUsuario(p.getIdUsuario());
 					pasajeros.add(p);
 				}
 			}
@@ -101,9 +98,6 @@ public class Muber {
 			for( Usuario user : usuarios ) {
 				if (user.isConductor()) {
 					Conductor c = (Conductor) user;
-					//Conductor c1 = new Conductor (c.getNombre(), c.getPassword(), c.getFechaIngreso() , c.getFechaVencimientoLic());
-					//c1.setIdConductor(c.getIdUsuario());
-					//c1.setIdUsuario(c.getIdUsuario());
 					conductores.add(c);
 				}
 			}
