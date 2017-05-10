@@ -251,12 +251,13 @@ public class MuberRestController {
 	private Conductor obtenerConductor (Integer conductorId){
 			Session session = getSession();	
 			Transaction tx = session.beginTransaction();
-			String hql = "FROM bd2.Muber.model.Conductor C WHERE C.idUsuario = ?";
+			String hql = "FROM Conductor C WHERE C.idUsuario = ?";
 			Query query = session.createQuery(hql);
 			query.setParameter(0, conductorId);
+
 			Conductor conductor = null;
-			if (query.list().size() == 1){
-				conductor = (Conductor) query.list().get(0);
+			if (query.uniqueResult() != null){
+				conductor = (Conductor) query.uniqueResult();
 			}
 			tx.rollback();
 			session.disconnect();	
