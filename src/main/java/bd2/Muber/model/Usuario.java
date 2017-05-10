@@ -3,7 +3,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import db2.Muber.DTO.ViajeDTO;
+import bd2.Muber.DTO.ViajeDTO;
 
 public abstract class Usuario {
 	

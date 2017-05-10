@@ -1,10 +1,10 @@
-package db2.Muber.DTO;
+package bd2.Muber.DTO;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import db2.Muber.DTO.ConductorDTO;
+import bd2.Muber.DTO.ConductorDTO;
 
 
 public class ViajeDTO {

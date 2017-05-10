@@ -1,4 +1,4 @@
-package db2.Muber.DAO;
+package bd2.Muber.DAO;
 
 public class ConductorDAO {
 

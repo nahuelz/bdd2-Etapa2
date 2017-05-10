@@ -1,4 +1,4 @@
-package db2.Muber.DTO;
+package bd2.Muber.DTO;
 
 import bd2.Muber.model.Pasajero;
 
