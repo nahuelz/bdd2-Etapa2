@@ -189,7 +189,10 @@ public class MuberRestController {
 		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
 		
 		if (conductorId != null){
-			Conductor conductor = obtenerConductor(conductorId);
+			Session session = this.getSession();
+			Transaction tx = session.beginTransaction();
+			Conductor conductor = obtenerConductor(conductorId, session);
+			tx.rollback();
 			if (conductor != null){
 				mapConductor.put("idUsuario", conductor.getIdUsuario());
 				mapConductor.put("nombre", conductor.getNombre());
@@ -229,53 +232,36 @@ public class MuberRestController {
 		 * http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero?=viajeId=4&pasajeroId=4
 		 */
 		
+		Map<String, Object> aMap = new HashMap<String, Object>();
 		if ( (viajeId != null) & (pasajeroId != null) ){
-			Viaje viaje = obtenerViaje(viajeId);
-			Pasajero pasajero = obtenerPasajero(pasajeroId);
+			Session session = this.getSession();
+			Transaction tx = session.beginTransaction();
+			Viaje viaje = obtenerViaje(viajeId, session);
+			Pasajero pasajero = obtenerPasajero(pasajeroId, session);
 			if (viaje != null){
 				if (pasajero != null){
 					if (viaje.isAbierto()) {
 						if (viaje.getPasajeros().size() < viaje.getCantidadMaximaPasajeros()){
-							
-							Session session = this.getSession();
-							Transaction tx = session.beginTransaction();
 							viaje.addPasajero(pasajero);
-							tx.commit();	
-							
-							Map<String, Object> aMap = new HashMap<String, Object>();
 							aMap.put("result", "OK");
-							return new Gson().toJson(aMap);
-						}else{
-							Map<String, Object> aMap = new HashMap<String, Object>();
-							aMap.put("result", "Error, el viaje esta lleno");
-							return new Gson().toJson(aMap);
 						}
-					}else{
-						Map<String, Object> aMap = new HashMap<String, Object>();
-						aMap.put("result", "Error, el viaje esta cerrado");
-						return new Gson().toJson(aMap);
+						else aMap.put("result", "Error, el viaje esta lleno");
 					}
-				}else{
-					Map<String, Object> aMap = new HashMap<String, Object>();
-					aMap.put("result", "Error, el pasajero no existe ");
-					return new Gson().toJson(aMap);
+					else aMap.put("result", "Error, el viaje esta cerrado");
 				}
-			} else {
-				Map<String, Object> aMap = new HashMap<String, Object>();
-				aMap.put("result", "Error, el viaje no existe ");
-				return new Gson().toJson(aMap);
+				else aMap.put("result", "Error, el pasajero no existe ");
 			}
-		}else{
-			Map<String, Object> aMap = new HashMap<String, Object>();
-			aMap.put("result", "Error, parametros incorrectos");
-			return new Gson().toJson(aMap);
+			else aMap.put("result", "Error, el viaje no existe ");
+			
+			tx.commit();
 		}
+		else aMap.put("result", "Error, parametros incorrectos");
+		
+		return new Gson().toJson(aMap);
 	}
 	
 	
-	private Conductor obtenerConductor (Integer conductorId){
-			Session session = getSession();	
-			Transaction tx = session.beginTransaction();
+	private Conductor obtenerConductor (Integer conductorId, Session session){
 			String hql = "FROM Conductor C WHERE C.idUsuario = ?";
 			Query query = session.createQuery(hql);
 			query.setParameter(0, conductorId);
@@ -284,14 +270,10 @@ public class MuberRestController {
 			if (query.uniqueResult() != null){
 				conductor = (Conductor) query.uniqueResult();
 			}
-			tx.rollback();
-			session.disconnect();	
 		return conductor;
 	}
 	
-	private Pasajero obtenerPasajero (Integer pasajeroId){
-		Session session = getSession();	
-		Transaction tx = session.beginTransaction();
+	private Pasajero obtenerPasajero (Integer pasajeroId, Session session){
 		String hql = "FROM Pasajero P WHERE P.idUsuario = ?";
 		Query query = session.createQuery(hql);
 		query.setParameter(0, pasajeroId);
@@ -299,15 +281,11 @@ public class MuberRestController {
 		Pasajero pasajero = null;
 		if (query.uniqueResult() != null){
 			pasajero = (Pasajero) query.uniqueResult();
-		}
-		tx.rollback();
-		session.disconnect();	
-	return pasajero;
-}
+		}	
+		return pasajero;
+	}
 	
-	private Viaje obtenerViaje (Integer viajeId){
-		Session session = getSession();	
-		Transaction tx = session.beginTransaction();
+	private Viaje obtenerViaje (Integer viajeId, Session session){
 		String hql = "FROM Viaje V WHERE V.idViaje = ?";
 		Query query = session.createQuery(hql);
 		query.setParameter(0, viajeId);
@@ -316,8 +294,6 @@ public class MuberRestController {
 		if (query.uniqueResult() != null){
 			viaje = (Viaje) query.uniqueResult();
 		}
-		tx.rollback();
-		session.disconnect();	
-	return viaje;
-}
+		return viaje;
+	}
 }
