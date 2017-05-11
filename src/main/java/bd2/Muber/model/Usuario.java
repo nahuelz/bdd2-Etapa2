@@ -3,8 +3,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import bd2.Muber.DTO.ViajeDTO;
-
 public abstract class Usuario {
 	
 	private int idUsuario;
