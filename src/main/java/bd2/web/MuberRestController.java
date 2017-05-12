@@ -254,6 +254,37 @@ public class MuberRestController {
 	}
 	
 	
+	@RequestMapping(value = "/viajes/calificar", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
+	public String calificar(Integer viajeId, Integer pasajeroId, Integer puntaje, String comentario) {
+		
+		/*
+		 * Comando curl:
+		 * curl -X POST -d "viajeId=1&pasajeroId=1&puntaje=4&comentario=Conductor agradable" "http://localhost:8080/MuberRESTful/rest/services/viajes/calificar"
+		 */
+		
+		Map<String, Object> aMap = new HashMap<String, Object>();
+		if ( (viajeId != null) & (pasajeroId != null) & (puntaje != null) & (comentario != null)){
+			Session session = this.getSession();
+			Transaction tx = session.beginTransaction();
+			Viaje viaje = obtenerViaje(viajeId, session);
+			Pasajero pasajero = obtenerPasajero(pasajeroId, session);
+			if (viaje != null){
+				if (pasajero != null){
+					Comentario c = new Comentario (puntaje, comentario, pasajero);
+					viaje.addComentario(c);
+					aMap.put("result", "OK");
+				}
+				else aMap.put("result", "Error, el pasajero no existe ");
+			}
+			else aMap.put("result", "Error, el viaje no existe ");
+			
+			tx.commit();
+		}
+		else aMap.put("result", "Error, parametros incorrectos");
+		
+		return new Gson().toJson(aMap);
+	}
+	
 	private Conductor obtenerConductor (Integer conductorId, Session session){
 			String hql = "FROM Conductor C WHERE C.idUsuario = ?";
 			Query query = session.createQuery(hql);
