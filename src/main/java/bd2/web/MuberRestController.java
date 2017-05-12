@@ -17,6 +17,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.comparator.ComparableComparator;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -283,6 +284,35 @@ public class MuberRestController {
 		else aMap.put("result", "Error, parametros incorrectos");
 		
 		return new Gson().toJson(aMap);
+	}
+	
+	@RequestMapping(value = "/conductores/top10", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	public String top10() {
+		
+		/*
+		 * URL
+		 * http://localhost:8080/MuberRESTful/rest/services/conductores/top10
+		 */
+		
+		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
+		Map<Integer, Object> mapConductores = new LinkedHashMap<Integer, Object>();
+		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
+		Session session = this.getSession();
+		Transaction tx = session.beginTransaction();
+		List<Conductor> conductores = session.createQuery("from Conductor c where c not in (select v.Conductor from Viaje v where v.estado = 'A')").list();
+		tx.rollback();
+		conductores.sort((c1, c2) -> c2.puntajePromedio().compareTo(c1.puntajePromedio()));
+		conductores = conductores.subList(0, Integer.min(conductores.size(), 10));
+		for (Conductor c : conductores) {
+			mapAtributos.put("nombre", c.getNombre());
+			mapAtributos.put("password", c.getPassword());
+			mapAtributos.put("fechaVencimientoLic", c.getFechaVencimientoLic());
+			mapAtributos.put("fechaIngreso", c.getFechaIngreso());
+			mapConductores.put(c.getIdUsuario(), new LinkedHashMap<String, Object>(mapAtributos));
+		}
+		mapAll.put("result", "OK");
+		mapAll.put("conductores", mapConductores);
+		return new Gson().toJson(mapAll);
 	}
 	
 	private Conductor obtenerConductor (Integer conductorId, Session session){

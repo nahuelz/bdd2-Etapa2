@@ -40,8 +40,8 @@ public class Conductor extends Usuario {
 		return true;
 	}
 	
-	public float puntajePromedio() {
-		if (this.getViajes().isEmpty()) return 0;
+	public Float puntajePromedio() {
+		if (this.getViajes().isEmpty()) return (float) 0;
 		float promedio = 0;
 		Set<Viaje> viajes = this.getViajes();
 		for (Viaje viaje : viajes ) {
