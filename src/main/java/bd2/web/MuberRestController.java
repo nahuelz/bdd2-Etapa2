@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import bd2.Muber.DAO.PasajeroDAO;
+import bd2.Muber.DTO.PasajeroDTO;
 import bd2.Muber.model.*;
 
 import com.google.gson.Gson;
@@ -62,11 +64,10 @@ public class MuberRestController {
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
 		Map<Integer, Object> mapPasajeros = new LinkedHashMap<Integer, Object>();
 		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		List<Pasajero> pasajeros = session.createQuery("from Pasajero").list();
-		tx.rollback();
-		for (Pasajero p : pasajeros) {
+		PasajeroDAO pasDAO = new PasajeroDAO();
+		
+		List<PasajeroDTO> pasajeros = pasDAO.obtenerPasajeros();
+		for (PasajeroDTO p : pasajeros) {
 			mapAtributos.put("nombre", p.getNombre());
 			mapAtributos.put("password", p.getPassword());
 			mapAtributos.put("creditos", p.getCreditos());
