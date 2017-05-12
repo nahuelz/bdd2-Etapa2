@@ -308,6 +308,33 @@ public class MuberRestController {
 		return new Gson().toJson(aMap);
 	}
 	
+	@RequestMapping(value = "/viajes/finalizar", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	public String finalizar(Integer viajeId) {
+		
+		/*
+		 * URL
+		 * http://localhost:8080/MuberRESTful/rest/services/viajes/finalizar?viajeId=4
+		 */
+		Map<String, Object> aMap = new HashMap<String, Object>();
+		
+		if  (viajeId != null) {
+			Session session = this.getSession();
+			Transaction tx = session.beginTransaction();
+			Viaje viaje = obtenerViaje(viajeId, session);
+			if (!viaje.isFinalizado()){
+				viaje.finalizar();
+				tx.commit();
+				session.close();
+				aMap.put("result", "OK");
+			}else{
+				aMap.put("result", "Error el viaje ya esta finalizado");
+			}
+		}else{
+			aMap.put("result", "Error parametros incorrectos");
+		}
+		return new Gson().toJson(aMap);
+	}
+	
 	private Conductor obtenerConductor (Integer conductorId, Session session){
 			String hql = "FROM Conductor C WHERE C.idUsuario = ?";
 			Query query = session.createQuery(hql);
