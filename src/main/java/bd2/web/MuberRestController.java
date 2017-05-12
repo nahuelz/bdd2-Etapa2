@@ -16,6 +16,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ import bd2.Muber.model.*;
 
 import com.google.gson.Gson;
 
+@Controller
 @ControllerAdvice
 @RequestMapping("/services")
 @ResponseBody
@@ -135,14 +137,15 @@ public class MuberRestController {
 		
 	}
 	
-	@RequestMapping(value = "/viajes/nuevo", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	@RequestMapping(value = "/viajes/nuevo", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
 	public String nuevo(String origen, String destino, Integer conductorId, Integer costoTotal, Integer cantidadPasajeros) {
 		
 		/*
-		 * URL:
-		 * http://localhost:8080/MuberRESTful/rest/services/viajes/nuevo?origen=La Plata&destino=Olavarria&conductorId=2&costoTotal=500&cantidadPasajeros=4
+		 * Comando curl:
+		 * curl -X POST -d "origen=Mar del Plata&destino=Capital Federal&conductorId=2&costoTotal=1000&cantidadPasajeros=6" "http://localhost:8080/MuberRESTful/rest/services/viajes/nuevo"
 		 */
 		
+		Map<String, Object> aMap = new HashMap<String, Object>();
 		if ( (origen != null) & (destino != null) & (conductorId != null) & (costoTotal != null) & (cantidadPasajeros != null) ){
 			Session session = this.getSession();
 			Transaction tx = session.beginTransaction();
@@ -152,26 +155,16 @@ public class MuberRestController {
 				if (conductor.getFechaVencimientoLic().after(new Date())) {
 					Viaje viaje = new Viaje (origen, destino, costoTotal, cantidadPasajeros, new Date(), conductor);
 					muber.addViaje(viaje);
-					tx.commit();
-					
-					Map<String, Object> aMap = new HashMap<String, Object>();
 					aMap.put("result", "OK");
-					return new Gson().toJson(aMap);
-				}else{
-					Map<String, Object> aMap = new HashMap<String, Object>();
-					aMap.put("result", "Error, id conductor incorrecto");
-					return new Gson().toJson(aMap);
 				}
-			} else {
-				Map<String, Object> aMap = new HashMap<String, Object>();
-				aMap.put("result", "Error, el conductor tiene la licencia vencida");
-				return new Gson().toJson(aMap);
+				else aMap.put("result", "Error, id conductor incorrecto");;
 			}
-		}else{
-			Map<String, Object> aMap = new HashMap<String, Object>();
-			aMap.put("result", "Error, parametros incorrectos");
-			return new Gson().toJson(aMap);
+			else aMap.put("result", "Error, el conductor tiene la licencia vencida");
+			
+			tx.commit();
 		}
+		else aMap.put("result", "Error, parametros incorrectos");
+		return new Gson().toJson(aMap);
 	}
 	
 	
@@ -224,12 +217,12 @@ public class MuberRestController {
 	}
 	
 	
-	@RequestMapping(value = "/viajes/agregarPasajero", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	@RequestMapping(value = "/viajes/agregarPasajero", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
 	public String agregarPasajero(Integer viajeId, Integer pasajeroId) {
 		
 		/*
-		 * URL
-		 * http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero?=viajeId=4&pasajeroId=4
+		 * Comando curl:
+		 * curl -X PUT "http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero?viajeId=1&pasajeroId=1"
 		 */
 		
 		Map<String, Object> aMap = new HashMap<String, Object>();
