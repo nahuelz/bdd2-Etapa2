@@ -36,6 +36,11 @@ public class Pasajero extends Usuario {
 		this.creditos = this.creditos - cantidad;
 	}
 	
+	public void cargarCredito(Integer cantidad) {
+		this.creditos = this.creditos + cantidad;
+		
+	}
+	
 	public boolean isPasajero() {
 		return true;
 	}
@@ -49,5 +54,7 @@ public class Pasajero extends Usuario {
 		return "Usuario [idUsuario=" + super.getIdUsuario() + ", nombre=" + super.getNombre() + ", password=" + super.getPassword() + ", fechaIngreso="
 				+ super.getFechaIngreso() + ", viajes=" + super.getViajes() + "]";
 	}
+
+	
 	
 }

@@ -56,9 +56,10 @@ public class MuberRestController {
 	public String pasajeros() {
 		
 		/*
-		 * URL
-		 * http://localhost:8080/MuberRESTful/rest/services/pasajeros
+		 * curl 
+		 * curl http://localhost:8080/MuberRESTful/rest/services/pasajeros
 		 */
+
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
 		Map<Integer, Object> mapPasajeros = new LinkedHashMap<Integer, Object>();
 		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
@@ -83,8 +84,8 @@ public class MuberRestController {
 	public String conductores() {
 		
 		/*
-		 * URL
-		 * http://localhost:8080/MuberRESTful/rest/services/conductores
+		 * curl
+		 * curl http://localhost:8080/MuberRESTful/rest/services/conductores
 		 */
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
 		Map<Integer, Object> mapConductores = new LinkedHashMap<Integer, Object>();
@@ -109,8 +110,8 @@ public class MuberRestController {
 	@RequestMapping(value = "/abiertos", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
 	public String abiertos() {
 		/*
-		 * URL:
-		 * http://localhost:8080/MuberRESTful/rest/services/abiertos
+		 * curl
+		 * curl http://localhost:8080/MuberRESTful/rest/services/abiertos
 		 */
 		
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
@@ -173,8 +174,8 @@ public class MuberRestController {
 	public String detalle(Integer conductorId) {
 		
 		/*
-		 * URL
-		 * http://localhost:8080/MuberRESTful/rest/services/conductores/detalle?conductorId=2
+		 * curl
+		 * curl http://localhost:8080/MuberRESTful/rest/services/conductores/detalle?conductorId=2
 		 */
 		
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
@@ -313,6 +314,55 @@ public class MuberRestController {
 		mapAll.put("result", "OK");
 		mapAll.put("conductores", mapConductores);
 		return new Gson().toJson(mapAll);
+		
+	@RequestMapping(value = "/pasajeros/cargarCredito", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
+	public String cargarCredito(Integer pasajeroId, Integer monto) {
+		
+		/*
+		 * curl
+		 * curl -X PUT "http://localhost:8080/MuberRESTful/rest/services/pasajeros/cargarCredito?pasajeroId=4&montoId=100"
+		 */
+		Map<String, Object> aMap = new HashMap<String, Object>();
+		
+		if  ((pasajeroId != null) & (monto != null)) {
+			Session session = this.getSession();
+			Transaction tx = session.beginTransaction();
+			Pasajero pasajero = obtenerPasajero(pasajeroId, session);
+			pasajero.cargarCredito(monto);
+			tx.commit();
+			session.close();
+			aMap.put("result", "OK");
+		}else{
+			aMap.put("result", "Error parametros incorrectos");
+		}
+		return new Gson().toJson(aMap);
+	}
+	
+	@RequestMapping(value = "/viajes/finalizar", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
+	public String finalizar(Integer viajeId) {
+		
+		/*
+		 * curl
+		 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/finalizar?viajeId=4
+		 */
+		Map<String, Object> aMap = new HashMap<String, Object>();
+		
+		if  (viajeId != null) {
+			Session session = this.getSession();
+			Transaction tx = session.beginTransaction();
+			Viaje viaje = obtenerViaje(viajeId, session);
+			if (!viaje.isFinalizado()){
+				viaje.finalizar();
+				tx.commit();
+				session.close();
+				aMap.put("result", "OK");
+			}else{
+				aMap.put("result", "Error el viaje ya esta finalizado");
+			}
+		}else{
+			aMap.put("result", "Error parametros incorrectos");
+		}
+		return new Gson().toJson(aMap);
 	}
 	
 	private Conductor obtenerConductor (Integer conductorId, Session session){
