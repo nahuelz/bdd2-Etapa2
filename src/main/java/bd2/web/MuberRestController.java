@@ -285,6 +285,29 @@ public class MuberRestController {
 		return new Gson().toJson(aMap);
 	}
 	
+	@RequestMapping(value = "/pasajeros/cargarCredito", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	public String cargarCredito(Integer pasajeroId, Integer monto) {
+		
+		/*
+		 * URL
+		 * http://localhost:8080/MuberRESTful/rest/services/pasajeros/cargarCredito?pasajeroId=4&montoId=100
+		 */
+		Map<String, Object> aMap = new HashMap<String, Object>();
+		
+		if  ((pasajeroId != null) & (monto != null)) {
+			Session session = this.getSession();
+			Transaction tx = session.beginTransaction();
+			Pasajero pasajero = obtenerPasajero(pasajeroId, session);
+			pasajero.cargarCredito(monto);
+			tx.commit();
+			session.close();
+			aMap.put("result", "OK");
+		}else{
+			aMap.put("result", "Error parametros incorrectos");
+		}
+		return new Gson().toJson(aMap);
+	}
+	
 	private Conductor obtenerConductor (Integer conductorId, Session session){
 			String hql = "FROM Conductor C WHERE C.idUsuario = ?";
 			Query query = session.createQuery(hql);
