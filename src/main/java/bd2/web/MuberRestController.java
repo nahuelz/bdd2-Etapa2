@@ -291,8 +291,8 @@ public class MuberRestController {
 	public String top10() {
 		
 		/*
-		 * URL
-		 * http://localhost:8080/MuberRESTful/rest/services/conductores/top10
+		 * curl
+		 * curl http://localhost:8080/MuberRESTful/rest/services/conductores/top10
 		 */
 		
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
@@ -314,6 +314,7 @@ public class MuberRestController {
 		mapAll.put("result", "OK");
 		mapAll.put("conductores", mapConductores);
 		return new Gson().toJson(mapAll);
+	}
 		
 	@RequestMapping(value = "/pasajeros/cargarCredito", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
 	public String cargarCredito(Integer pasajeroId, Integer monto) {
