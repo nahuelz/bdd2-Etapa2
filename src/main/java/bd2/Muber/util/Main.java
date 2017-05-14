@@ -38,13 +38,14 @@ public class Main {
 		c.set(2018, 0, 1);
 		Conductor conductor = new Conductor("Roberto", "123456", new Date(), c.getTime());
 		
+		
 		c.set(2017, 6, 5);
+		
+		
 		Viaje viaje = new Viaje("La Plata", "Tres Arroyos", 900, 10, c.getTime(), conductor);
-
+		
 		Pasajero pasajero1 = new Pasajero("Germán", "123456", new Date(), 1500);
-		
 		Pasajero pasajero2 = new Pasajero("Alicia", "123456", new Date(), 1500);
-		
 		Pasajero pasajero3 = new Pasajero("Margarita", "123456", new Date(), 1500);
 		
 		viaje.addPasajero(pasajero1);
@@ -53,6 +54,7 @@ public class Main {
 		
 		viaje.cerrar();
 		viaje.finalizar();
+
 		
 		Comentario comentario1 = new Comentario(5, "Muy buen conductor", pasajero1);
 		viaje.addComentario(comentario1);
@@ -63,12 +65,30 @@ public class Main {
 		Comentario comentario3 = new Comentario(4, "Buen conductor", pasajero3);
 		viaje.addComentario(comentario3);
 		
+		Viaje viaje2 = new Viaje("Cordoba", "Mar del plata", 3500, 10, c.getTime(), conductor);
+		
+		Pasajero pasajero4 = new Pasajero("Hugo", "123456", new Date(), 2300);
+		
+		pasajero3.cargarCredito(4000);
+		viaje2.addPasajero(pasajero3);
+		viaje2.addPasajero(pasajero4);
+		
+		viaje2.cerrar();
+		viaje2.finalizar();
+		
+		Comentario comentario4 = new Comentario(4, "Buen conductor", pasajero3);
+		viaje2.addComentario(comentario4);
+		Comentario comentario5 = new Comentario(1, "Mal conductor", pasajero4);
+		viaje2.addComentario(comentario5);
+		
 		Muber muber = new Muber();
 		muber.addViaje(viaje);
+		muber.addViaje(viaje2);
 		muber.addUser(conductor);
 		muber.addUser(pasajero1);
 		muber.addUser(pasajero2);
 		muber.addUser(pasajero3);
+		muber.addUser(pasajero4);
 		
 		Session session = sf.openSession();
 

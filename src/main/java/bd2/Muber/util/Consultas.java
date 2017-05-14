@@ -32,7 +32,7 @@ public class Consultas {
 		
 		System.out.println("---------- INFO CONDUCTOR ----------");
 		tx = session.beginTransaction();
-		muber.getInfoConductor(1);
+		muber.getInfoConductor(2);
 		tx.rollback();
 		
 
