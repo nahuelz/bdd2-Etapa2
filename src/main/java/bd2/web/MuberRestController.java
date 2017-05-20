@@ -194,7 +194,7 @@ public class MuberRestController {
 	
 	
 	@RequestMapping(value = "/viajes/calificar", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
-	public String calificar(Integer viajeId, Integer pasajeroId, Integer puntaje, String comentario) {	
+	public String calificar(@RequestParam("viajeId") Integer viajeId, @RequestParam("pasajeroId") Integer pasajeroId, @RequestParam("puntaje") Integer puntaje, @RequestParam("comentario") String comentario) {	
 		/*
 		 * curl -X POST -d "viajeId=1&pasajeroId=1&puntaje=4&comentario=Conductor agradable" "http://localhost:8080/MuberRESTful/rest/services/viajes/calificar"
 		 */
