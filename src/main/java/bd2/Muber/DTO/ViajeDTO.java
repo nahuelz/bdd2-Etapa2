@@ -2,9 +2,15 @@ package bd2.Muber.DTO;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import bd2.Muber.DAO.ComentarioDAO;
 import bd2.Muber.DTO.ConductorDTO;
+import bd2.Muber.model.Comentario;
+import bd2.Muber.model.Conductor;
+import bd2.Muber.model.Pasajero;
+import bd2.Muber.model.Viaje;
 
 
 public class ViajeDTO {
@@ -38,6 +44,39 @@ public class ViajeDTO {
 		}
 	}
 	
+	public ViajeDTO(Viaje v) {
+		this.setCantidadMaximaPasajeros(v.getCantidadMaximaPasajeros());
+		
+		Set<Comentario> comentarios = v.getComentarios();
+		Set<ComentarioDTO> comentariosDTO = new HashSet<ComentarioDTO>();
+		for (Comentario c : comentarios){
+			ComentarioDTO com = new ComentarioDTO(c);
+			comentariosDTO.add(com);
+			
+		}
+		this.setComentarios(comentariosDTO);
+		
+		ConductorDTO conductorDTO = new ConductorDTO(v.getConductor());
+		this.setConductor(conductorDTO);	
+		
+		this.setCostoTotal(v.getCostoTotal());
+		this.setDestino(v.getDestino());
+		this.setEstado(v.getEstado());
+		this.setFecha(v.getFecha());
+		this.setIdViaje(v.getIdViaje());
+		this.setOrigen(v.getOrigen());
+		
+		Set<Pasajero> pasajeros = v.getPasajeros();
+		Set<PasajeroDTO> pasajerosDTO = new HashSet<PasajeroDTO>();
+		for (Pasajero p : pasajeros){
+			PasajeroDTO pas = new PasajeroDTO(p);
+			pasajerosDTO.add(pas);
+		}
+		this.setPasajeros(pasajerosDTO);
+		
+		
+	}
+
 	public int getIdViaje() {
 		return idViaje;
 	}

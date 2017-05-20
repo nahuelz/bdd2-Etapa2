@@ -1,5 +1,6 @@
 package bd2.Muber.DTO;
 
+import bd2.Muber.model.Comentario;
 import bd2.Muber.model.Pasajero;
 
 public class ComentarioDTO {
@@ -17,6 +18,13 @@ public class ComentarioDTO {
 		this.comentario = comentario;
 		this.calificacion = calificacion;
 		this.pasajero = pasajero;
+	}
+	
+	public ComentarioDTO(Comentario c) {
+		this.setCalificacion(c.getCalificacion());
+		this.setComentario(c.getComentario());
+		this.setIdComentario(c.getIdComentario());
+		this.setPasajero(c.getPasajero());
 	}
 	
 	public int getIdComentario() {
@@ -50,6 +58,5 @@ public class ComentarioDTO {
 	public void setPasajero(Pasajero pasajero) {
 		this.pasajero = pasajero;
 	}
-
 
 }

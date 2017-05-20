@@ -1,6 +1,8 @@
 package bd2.Muber.DTO;
 import java.util.Date;
 
+import bd2.Muber.model.Conductor;
+
 public class ConductorDTO extends UsuarioDTO  {
 	
 	private int idConductor;
@@ -13,6 +15,14 @@ public class ConductorDTO extends UsuarioDTO  {
 	public ConductorDTO(String nombre, String password, Date fechaIngreso, Date fechaVencimiento){
 		super(nombre, password, fechaIngreso);
 		this.setFechaVencimientoLic(fechaVencimiento);
+	}
+
+	public ConductorDTO(Conductor c) {
+		this.setFechaIngreso(c.getFechaIngreso());
+		this.setFechaVencimientoLic(c.getFechaVencimientoLic());
+		this.setIdUsuario(c.getIdUsuario());
+		this.setNombre(c.getNombre());
+		this.setPassword(c.getPassword());
 	}
 
 	public Date getFechaVencimientoLic() {

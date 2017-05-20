@@ -23,6 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import bd2.Muber.DAO.ConductorDAO;
+import bd2.Muber.DAO.PasajeroDAO;
+import bd2.Muber.DAO.ViajeDAO;
+import bd2.Muber.DTO.ConductorDTO;
+import bd2.Muber.DTO.PasajeroDTO;
+import bd2.Muber.DTO.ViajeDTO;
 import bd2.Muber.model.*;
 
 import com.google.gson.Gson;
@@ -51,8 +57,9 @@ public class MuberRestController {
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
 		Map<Integer, Object> mapPasajeros = new LinkedHashMap<Integer, Object>();
 		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
-		List <Pasajero> pasajeros = obtenerPasajeros();
-		for (Pasajero p : pasajeros) {
+		PasajeroDAO dao = new PasajeroDAO();
+		List <PasajeroDTO> pasajeros =  dao.obtenerPasajeros();
+		for (PasajeroDTO p : pasajeros) {
 			mapAtributos.put("nombre", p.getNombre());
 			mapAtributos.put("password", p.getPassword());
 			mapAtributos.put("creditos", p.getCreditos());
@@ -73,8 +80,9 @@ public class MuberRestController {
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
 		Map<Integer, Object> mapConductores = new LinkedHashMap<Integer, Object>();
 		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
-		List <Conductor> conductores = obtenerConductores();
-		for (Conductor c : conductores) {
+		ConductorDAO dao = new ConductorDAO();
+		List <ConductorDTO> conductores =  dao.obtenerConductores();
+		for (ConductorDTO c : conductores) {
 			mapAtributos.put("nombre", c.getNombre());
 			mapAtributos.put("password", c.getPassword());
 			mapAtributos.put("fechaVencimientoLic", c.getFechaVencimientoLic());
@@ -96,8 +104,9 @@ public class MuberRestController {
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
 		Map<Integer, Object> mapViajes = new LinkedHashMap<Integer, Object>();
 		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
-		List <Viaje> viajes = obtenerViajes();
-		for (Viaje v : viajes) {
+		ViajeDAO dao = new ViajeDAO();
+		List <ViajeDTO> viajes =  dao.obtenerViajes();
+		for (ViajeDTO v : viajes) {
 			if (v.isAbierto()){
 				mapAtributos.put("origen", v.getOrigen());
 				mapAtributos.put("destino", v.getDestino());
@@ -116,14 +125,15 @@ public class MuberRestController {
 	}
 	
 	@RequestMapping(value = "/viajes/nuevo", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
-	public String nuevo(String origen, String destino, Integer conductorId, Integer costoTotal, Integer cantidadPasajeros) {
+	public String nuevo(@RequestParam("origen") String origen, @RequestParam("destino") String destino, @RequestParam("conductorId") Integer conductorId, @RequestParam("costoTotal") Integer costoTotal, @RequestParam("cantidadPasajeros") Integer cantidadPasajeros) {
 		/*
 		 * curl -X POST -d "origen=Mar del Plata&destino=Capital Federal&conductorId=2&costoTotal=1000&cantidadPasajeros=6" "http://localhost:8080/MuberRESTful/rest/services/viajes/nuevo"
 		 */
 		
 		Map<String, Object> aMap = new HashMap<String, Object>();
 		if ( (origen != null) & (destino != null) & (conductorId != null) & (costoTotal != null) & (cantidadPasajeros != null) ){
-			String resultado = this.crearViaje(origen, destino, conductorId, costoTotal, cantidadPasajeros);
+			ViajeDAO dao = new ViajeDAO();
+			String resultado = dao.crearViaje(origen, destino, conductorId, costoTotal, cantidadPasajeros);
 			aMap.put("result", resultado);
 		}else{ 
 			aMap.put("result", "Error, parametros incorrectos");
@@ -142,7 +152,8 @@ public class MuberRestController {
 		Map<String, Object> mapConductor = new LinkedHashMap<String, Object>();
 		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
 		if (conductorId != null){
-			Conductor conductor = obtenerConductor(conductorId);
+			ConductorDAO dao = new ConductorDAO();
+			ConductorDTO conductor = dao.obtenerConductor(conductorId);
 			if (conductor != null){
 				mapConductor.put("idUsuario", conductor.getIdUsuario());
 				mapConductor.put("nombre", conductor.getNombre());
@@ -150,16 +161,6 @@ public class MuberRestController {
 				mapConductor.put("fechaVencimientoLic", conductor.getFechaVencimientoLic());
 				mapConductor.put("fechaIngreso", conductor.getFechaIngreso());
 	
-				for (Viaje v : conductor.getViajes()) {
-					mapAtributos.put("origen", v.getOrigen());
-					mapAtributos.put("destino", v.getDestino());
-					mapAtributos.put("costoTotal", v.getCostoTotal());
-					mapAtributos.put("fecha", v.getFecha());
-					mapAtributos.put("cantidadMaximaPasajeros", v.getCantidadMaximaPasajeros());
-					mapAtributos.put("estado", v.getEstado());
-					mapViajes.put(v.getIdViaje(), new LinkedHashMap<String, Object>(mapAtributos));
-				}
-				mapConductor.put("viajes", mapViajes);
 				mapAll.put("result", "OK");
 				mapAll.put("conductor", mapConductor);
 			}else{
@@ -175,15 +176,15 @@ public class MuberRestController {
 	
 	
 	@RequestMapping(value = "/viajes/agregarPasajero", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
-	public String agregarPasajero(Integer viajeId, Integer pasajeroId) {
+	public String agregarPasajero(@RequestBody Viaje viajeId, @RequestBody Pasajero pasajeroId) {
 		
 		/*
-		 * curl -X PUT "http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero?viajeId=1&pasajeroId=1"
+		 * curl -X PUT -H 'content-type:applicaction/json' -d {"viajeId":1, "pasajeroId":2} "http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero"
 		 */
-		
 		Map<String, Object> aMap = new HashMap<String, Object>();
 		if ( (viajeId != null) & (pasajeroId != null) ){
-			String resultado = addPasajero(viajeId, pasajeroId);
+			PasajeroDAO dao = new PasajeroDAO();
+			String resultado = dao.addPasajero(viajeId, pasajeroId);
 			aMap.put("Result", resultado);
 		}else{
 			aMap.put("result", "Error, parametros incorrectos");
@@ -199,7 +200,8 @@ public class MuberRestController {
 		 */
 		Map<String, Object> aMap = new HashMap<String, Object>();
 		if ( (viajeId != null) & (pasajeroId != null) & (puntaje != null) & (comentario != null)){
-			String resultado = this.calificarViaje(viajeId, pasajeroId, puntaje, comentario);
+			ViajeDAO dao = new ViajeDAO();
+			String resultado = dao.calificarViaje(viajeId, pasajeroId, puntaje, comentario);
 			aMap.put("result", resultado);
 		}else 
 			aMap.put("result", "Error, parametros incorrectos");
@@ -241,7 +243,8 @@ public class MuberRestController {
 		 */
 		Map<String, Object> aMap = new HashMap<String, Object>();
 		if  ((pasajeroId != null) && (monto != null)) {
-			String resultado = this.addCredito(pasajeroId, monto);
+			PasajeroDAO dao = new PasajeroDAO();
+			String resultado = dao.addCredito(pasajeroId, monto);
 			aMap.put("result", resultado);
 		}else{
 			aMap.put("result", "Error parametros incorrectos");
@@ -256,7 +259,8 @@ public class MuberRestController {
 		 */
 		Map<String, Object> aMap = new HashMap<String, Object>();
 		if  (viajeId != null) {
-			if (this.finalizarViaje(viajeId)){
+			ViajeDAO dao = new ViajeDAO();
+			if (dao.finalizarViaje(viajeId)){
 				aMap.put("Result", "Viaje Fianlizado");
 			}else{
 				aMap.put("Result", "Error, no existe viaje abierto con el id ingresado");
@@ -266,200 +270,4 @@ public class MuberRestController {
 		}
 		return new Gson().toJson(aMap);
 	}
-
-	private String addPasajero(Integer viajeId, Integer pasajeroId){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		Viaje viaje = (Viaje) session.get(Viaje.class, viajeId);
-		Pasajero pasajero = (Pasajero) session.get(Pasajero.class, pasajeroId);
-		String resultado;
-		if (viaje != null){
-			if (pasajero != null){
-				if (viaje.addPasajero(pasajero)){
-					tx.commit();
-					resultado = "pasajero agregado";
-				}else{
-					resultado = "No se pudo agregar el pasajero";
-				}
-			}else{
-				resultado = "No se encontro pasajero con el id ingresado";
-			}
-		}else{
-			resultado = "No se encontro viaje con el id ingresado";			
-		}
-		session.disconnect();
-		session.close();
-		return resultado;
-	}
-	private String addCredito(Integer pasajeroId, Integer monto){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		Pasajero pasajero = (Pasajero) session.get(Pasajero.class, pasajeroId);
-		String resultado;
-		if (pasajero != null){
-			resultado = "Credito agregado";
-			pasajero.cargarCredito(monto);
-			tx.commit();
-		}else{
-			resultado = "El ID ingresado no corresponde a un pasajero";
-		}
-		session.disconnect();
-		session.close();
-		return resultado;
-	}
-	
-	private boolean finalizarViaje(Integer viajeId){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		Viaje viaje = (Viaje) session.get(Viaje.class, viajeId);
-		boolean resultado = false;
-		if ( (viaje != null) && (!viaje.isFinalizado())){
-			viaje.finalizar();
-			tx.commit();
-			resultado = true;
-		}
-		session.disconnect();
-		session.close();
-		return resultado;
-	}
-	
-	private String calificarViaje(Integer viajeId, Integer pasajeroId, Integer puntaje, String comentario){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		Viaje viaje = (Viaje) session.get(Viaje.class, viajeId);
-		Pasajero pasajero = (Pasajero) session.get(Pasajero.class, pasajeroId);
-		String resultado;
-		if ((viaje != null) && (!viaje.isAbierto()) ) {
-			if (pasajero != null){
-				if (this.fuePasajero(pasajero, viaje)){
-					if (!this.calificoViaje(pasajero, viaje)){
-						Comentario c = new Comentario (puntaje, comentario, pasajero);
-						viaje.addComentario(c);
-						tx.commit();
-						resultado = "Viaje calificado.";
-					}else{
-						resultado = "El pasajero ya ah calificado este viaje";
-					}
-				}else{
-					resultado = "El pasajero no fue pasajero (valga la redundancia) del viaje ingresado";
-				}
-			}else{
-				resultado = "El pasajero ingresado no existe";
-			}
-		}else{
-			resultado = "No se encontro viaje finalizado con el id ingresado";
-		}
-		session.disconnect();
-		session.close();
-		return resultado;
-	}
-	
-	private boolean calificoViaje(Pasajero pasajero, Viaje viaje){
-		Set<Comentario> comentarios = viaje.getComentarios();
-		for (Comentario c : comentarios) {
-			if (c.getPasajero().equals(pasajero)){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private boolean fuePasajero(Pasajero pasajero, Viaje viaje){
-		 Set<Pasajero> pasajeros = viaje.getPasajeros();
-		 for (Pasajero p : pasajeros) {
-				if ( p.equals(pasajero)){
-					return true;
-				}
-		 }
-		 return false;
-	}
-	
-	private Pasajero obtenerPasajero(Integer pasajeroId){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		Pasajero pasajero = (Pasajero) session.get(Pasajero.class, pasajeroId);
-		tx.rollback();
-		session.disconnect();
-		session.close();
-		return pasajero;
-	}
-	
-	private Conductor obtenerConductor(Integer conductorId){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		Conductor conductor = (Conductor) session.get(Conductor.class, conductorId);
-		for (Viaje v : conductor.getViajes()){}
-		tx.rollback();
-		session.disconnect();
-		session.close();
-		return conductor;
-	}
-	
-	private Viaje obtenerViaje(Integer viajeId){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		Viaje viaje = (Viaje) session.get(Viaje.class, viajeId);
-		tx.rollback();
-		session.disconnect();
-		session.close();
-		return viaje;
-	}
-	
-	private List<Pasajero> obtenerPasajeros(){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		List<Pasajero> pasajeros = session.createQuery("from Pasajero").list();
-		tx.rollback();
-		session.disconnect();
-		session.close();
-		return pasajeros;
-	}
-	
-	private List<Conductor> obtenerConductores(){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		List<Conductor> conductores = session.createQuery("from Conductor").list();
-		tx.rollback();
-		session.disconnect();
-		session.close();
-		return conductores;
-	}
-	
-	private List<Viaje> obtenerViajes(){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		List<Viaje> viaje = session.createQuery("from Viaje").list();
-		tx.rollback();
-		session.disconnect();
-		session.close();
-		return viaje;
-	}
-	
-	private String crearViaje (String origen, String destino, Integer costoTotal, Integer cantidadPasajeros, Integer conductorId){
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		Muber muber = (Muber) session.createQuery("from Muber").uniqueResult();
-		Conductor conductor = (Conductor) session.get(Conductor.class, conductorId);
-		String resultado;
-		if (conductor != null){
-			if (conductor.getFechaVencimientoLic().after(new Date())) {
-				Viaje viaje = new Viaje (origen, destino, costoTotal, cantidadPasajeros, new Date(), conductor);
-				muber.addViaje(viaje);
-				resultado = "Viaje creado";
-			}else{
-				resultado = "Error, el conductor posee la licencia vencida";
-			}
-		}else{
-			resultado = "No se encontro conductor con el id ingresado";
-		}
-		
-		tx.commit();
-		session.disconnect();
-		session.close();
-		return resultado;
-		
-	}
-	
-	
-	
 }

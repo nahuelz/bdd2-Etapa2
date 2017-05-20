@@ -2,6 +2,8 @@ package bd2.Muber.DTO;
 
 import java.util.Date;
 
+import bd2.Muber.model.Pasajero;
+
 public class PasajeroDTO extends UsuarioDTO {
 	private float creditos;
 	private int idPasajero;
@@ -15,6 +17,14 @@ public class PasajeroDTO extends UsuarioDTO {
 		this.setCreditos(creditos);
 	}
 	
+	public PasajeroDTO(Pasajero p) {
+		this.setCreditos(p.getCreditos());
+		this.setFechaIngreso(p.getFechaIngreso());
+		this.setIdUsuario(p.getIdUsuario());
+		this.setNombre(p.getNombre());
+		this.setPassword(p.getPassword());
+	}
+
 	public float getCreditos() {
 		return creditos;
 	}
