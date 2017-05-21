@@ -9,9 +9,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 import bd2.Muber.DTO.ConductorDTO;
-import bd2.Muber.DTO.PasajeroDTO;
 import bd2.Muber.model.Conductor;
-import bd2.Muber.model.Pasajero;
 import bd2.Muber.model.Viaje;
 
 public class ConductorDAO {
@@ -24,7 +22,6 @@ public class ConductorDAO {
 		return session;
 	}
 	
-	@SuppressWarnings("null")
 	public List<ConductorDTO> obtenerConductores(){
 		Session session = this.getSession();
 		Transaction tx = session.beginTransaction();
@@ -44,8 +41,10 @@ public class ConductorDAO {
 		Session session = this.getSession();
 		Transaction tx = session.beginTransaction();
 		Conductor conductor = (Conductor) session.get(Conductor.class, conductorId);
-		for (Viaje v : conductor.getViajes()){}
-		ConductorDTO conductorDTO = new ConductorDTO(conductor);
+		ConductorDTO conductorDTO = null;
+		if (conductor != null){		
+			conductorDTO = new ConductorDTO(conductor);
+		}
 		tx.rollback();
 		session.disconnect();
 		session.close();

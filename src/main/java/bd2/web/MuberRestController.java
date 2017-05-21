@@ -1,20 +1,12 @@
 package bd2.web;
 
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.comparator.ComparableComparator;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +21,6 @@ import bd2.Muber.DAO.ViajeDAO;
 import bd2.Muber.DTO.ConductorDTO;
 import bd2.Muber.DTO.PasajeroDTO;
 import bd2.Muber.DTO.ViajeDTO;
-import bd2.Muber.model.*;
 
 import com.google.gson.Gson;
 
@@ -39,14 +30,6 @@ import com.google.gson.Gson;
 @ResponseBody
 @EnableWebMvc
 public class MuberRestController {
-
-	protected Session getSession() {
-		Configuration cfg = new Configuration();
-		cfg.configure("hibernate.cfg.xml");
-		SessionFactory factory = cfg.buildSessionFactory();
-		Session session = factory.openSession();
-		return session;
-	}
 	
 	@RequestMapping(value = "/pasajeros", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
 	public String pasajeros() {
@@ -95,8 +78,8 @@ public class MuberRestController {
 		
 	}
 	
-	@RequestMapping(value = "/abiertos", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
-	public String abiertos() {
+	@RequestMapping(value = "/viajes/abiertos", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	public String viajesAbiertos() {
 		/*
 		 * curl http://localhost:8080/MuberRESTful/rest/services/abiertos
 		 */
@@ -148,9 +131,7 @@ public class MuberRestController {
 		 * curl http://localhost:8080/MuberRESTful/rest/services/conductores/detalle?conductorId=2
 		 */
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
-		Map<Integer, Object> mapViajes = new LinkedHashMap<Integer, Object>();
 		Map<String, Object> mapConductor = new LinkedHashMap<String, Object>();
-		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
 		if (conductorId != null){
 			ConductorDAO dao = new ConductorDAO();
 			ConductorDTO conductor = dao.obtenerConductor(conductorId);

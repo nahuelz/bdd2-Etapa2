@@ -10,7 +10,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import bd2.Muber.DTO.ConductorDTO;
 import bd2.Muber.DTO.ViajeDTO;
 import bd2.Muber.model.Comentario;
 import bd2.Muber.model.Conductor;
@@ -28,7 +27,6 @@ public class ViajeDAO {
 		return session;
 	}
 	
-	@SuppressWarnings("null")
 	public List<ViajeDTO> obtenerViajes(){
 		Session session = this.getSession();
 		Transaction tx = session.beginTransaction();

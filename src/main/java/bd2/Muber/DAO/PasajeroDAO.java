@@ -1,7 +1,6 @@
 package bd2.Muber.DAO;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -10,7 +9,6 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 import bd2.Muber.DTO.PasajeroDTO;
-import bd2.Muber.model.Comentario;
 import bd2.Muber.model.Pasajero;
 import bd2.Muber.model.Viaje;
 
@@ -24,7 +22,6 @@ public class PasajeroDAO {
 		return session;
 	}
 	
-	@SuppressWarnings("null")
 	public List<PasajeroDTO> obtenerPasajeros(){
 		Session session = this.getSession();
 		Transaction tx = session.beginTransaction();
