@@ -7,7 +7,8 @@ public class ConductorDTO extends UsuarioDTO  {
 	
 	private int idConductor;
 	private Date fechaVencimientoLic;
-	
+	private float puntajePromedio;
+
 	public ConductorDTO(){
 		super();
 	}
@@ -47,6 +48,14 @@ public class ConductorDTO extends UsuarioDTO  {
 
 	public boolean isConductor() {
 		return true;
+	}
+	
+	public float getPuntajePromedio() {
+		return puntajePromedio;
+	}
+
+	public void setPuntajePromedio(float puntajePromedio) {
+		this.puntajePromedio = puntajePromedio;
 	}
 
 }

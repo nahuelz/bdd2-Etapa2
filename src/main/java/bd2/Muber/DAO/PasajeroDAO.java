@@ -65,7 +65,7 @@ public class PasajeroDAO {
 		return resultado;
 	}
 	
-	public String addCredito(Integer pasajeroId, Integer monto){
+	public String addCredito(Integer pasajeroId, Double monto){
 		Session session = this.getSession();
 		Transaction tx = session.beginTransaction();
 		Pasajero pasajero = (Pasajero) session.get(Pasajero.class, pasajeroId);

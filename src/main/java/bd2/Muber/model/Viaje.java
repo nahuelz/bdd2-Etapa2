@@ -115,7 +115,7 @@ public class Viaje {
 		this.estado = estado;
 	}
 	
-	public float costoPorPasajero() {
+	public double costoPorPasajero() {
 		return (this.costoTotal / this.pasajeros.size());
 	}
 	

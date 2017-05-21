@@ -5,7 +5,7 @@ import java.util.Date;
 import bd2.Muber.model.Pasajero;
 
 public class PasajeroDTO extends UsuarioDTO {
-	private float creditos;
+	private double creditos;
 	private int idPasajero;
 
 	public PasajeroDTO(){
@@ -25,11 +25,11 @@ public class PasajeroDTO extends UsuarioDTO {
 		this.setPassword(p.getPassword());
 	}
 
-	public float getCreditos() {
+	public double getCreditos() {
 		return creditos;
 	}
 
-	public void setCreditos(float creditos) {
+	public void setCreditos(double creditos) {
 		this.creditos = creditos;
 	}
 	

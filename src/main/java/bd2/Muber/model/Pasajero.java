@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Pasajero extends Usuario {
 
-	private float creditos;
+	private double creditos;
 	private int idPasajero;
 
 	public Pasajero(){
@@ -16,11 +16,11 @@ public class Pasajero extends Usuario {
 		this.setCreditos(creditos);
 	}
 	
-	public float getCreditos() {
+	public double getCreditos() {
 		return creditos;
 	}
 
-	public void setCreditos(float creditos) {
+	public void setCreditos(double creditos) {
 		this.creditos = creditos;
 	}
 	
@@ -32,11 +32,11 @@ public class Pasajero extends Usuario {
 		this.idPasajero = idPasajero;
 	}
 	
-	public void descontarCredito(float cantidad){
+	public void descontarCredito(Double cantidad){
 		this.creditos = this.creditos - cantidad;
 	}
 	
-	public void cargarCredito(Integer cantidad) {
+	public void cargarCredito(Double cantidad) {
 		this.creditos = this.creditos + cantidad;
 		
 	}

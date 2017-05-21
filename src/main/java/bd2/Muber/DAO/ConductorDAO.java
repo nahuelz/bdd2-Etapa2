@@ -51,5 +51,23 @@ public class ConductorDAO {
 		session.close();
 		return conductorDTO;
 	}
-
+	
+	public List<ConductorDTO> obtenerTop10(){
+		Session session = this.getSession();
+		Transaction tx = session.beginTransaction();
+		List<Conductor> conductores = session.createQuery("from Conductor c where c not in (select v.Conductor from Viaje v where v.estado = 'A')").list();
+		conductores.sort((c1, c2) -> c2.puntajePromedio().compareTo(c1.puntajePromedio()));
+		conductores = conductores.subList(0, Integer.min(conductores.size(), 10));
+		List<ConductorDTO> conductoresDTO = new ArrayList<ConductorDTO>();
+		for (Conductor c : conductores) {
+			ConductorDTO con = new ConductorDTO(c);
+			con.setPuntajePromedio(c.puntajePromedio());
+			conductoresDTO.add(con);
+		}
+		tx.rollback();
+		session.disconnect();
+		session.close();
+		return conductoresDTO;
+	}
+	
 }

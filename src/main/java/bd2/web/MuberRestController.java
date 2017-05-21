@@ -176,15 +176,15 @@ public class MuberRestController {
 	
 	
 	@RequestMapping(value = "/viajes/agregarPasajero", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
-	public String agregarPasajero(@RequestBody Viaje viajeId, @RequestBody Pasajero pasajeroId) {
+	public String agregarPasajero(@RequestBody Map<String, Integer> params) {
 		
 		/*
-		 * curl -X PUT -H 'content-type:applicaction/json' -d {"viajeId":1, "pasajeroId":2} "http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero"
+		 * Probado con Postman {"viajeId":1,"pasajeroId":3}
 		 */
 		Map<String, Object> aMap = new HashMap<String, Object>();
-		if ( (viajeId != null) & (pasajeroId != null) ){
+		if ( (params.get("viajeId") != null) & (params.get("pasajeroId") != null) ){
 			PasajeroDAO dao = new PasajeroDAO();
-			String resultado = dao.addPasajero(viajeId, pasajeroId);
+			String resultado = dao.addPasajero(params.get("viajeId"), params.get("pasajeroId"));
 			aMap.put("Result", resultado);
 		}else{
 			aMap.put("result", "Error, parametros incorrectos");
@@ -218,17 +218,14 @@ public class MuberRestController {
 		Map<String, Object> mapAll = new LinkedHashMap<String, Object>();
 		Map<Integer, Object> mapConductores = new LinkedHashMap<Integer, Object>();
 		Map<String, Object> mapAtributos = new LinkedHashMap<String, Object>();
-		Session session = this.getSession();
-		Transaction tx = session.beginTransaction();
-		List<Conductor> conductores = session.createQuery("from Conductor c where c not in (select v.Conductor from Viaje v where v.estado = 'A')").list();
-		tx.rollback();
-		conductores.sort((c1, c2) -> c2.puntajePromedio().compareTo(c1.puntajePromedio()));
-		conductores = conductores.subList(0, Integer.min(conductores.size(), 10));
-		for (Conductor c : conductores) {
+		ConductorDAO dao = new ConductorDAO();
+		List <ConductorDTO> conductores =  dao.obtenerTop10();
+		for (ConductorDTO c : conductores) {
 			mapAtributos.put("nombre", c.getNombre());
 			mapAtributos.put("password", c.getPassword());
 			mapAtributos.put("fechaVencimientoLic", c.getFechaVencimientoLic());
 			mapAtributos.put("fechaIngreso", c.getFechaIngreso());
+			mapAtributos.put("puntajePromedio", c.getPuntajePromedio());
 			mapConductores.put(c.getIdUsuario(), new LinkedHashMap<String, Object>(mapAtributos));
 		}
 		mapAll.put("result", "OK");
@@ -237,10 +234,13 @@ public class MuberRestController {
 	}
 		
 	@RequestMapping(value = "/pasajeros/cargarCredito", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
-	public String cargarCredito(Integer pasajeroId, Integer monto) {
+	public String cargarCredito(@RequestBody Map<String, Object> params) {
 		/*
-		 * curl -X PUT "http://localhost:8080/MuberRESTful/rest/services/pasajeros/cargarCredito?pasajeroId=4&monto=100"
+		 * Probado con Postman {"pasajeroId":1,"monto":200}
 		 */
+		Double aux = (Double) params.get("pasajeroId");
+		Integer pasajeroId =  aux.intValue();
+		Double monto = (Double) params.get("monto");
 		Map<String, Object> aMap = new HashMap<String, Object>();
 		if  ((pasajeroId != null) && (monto != null)) {
 			PasajeroDAO dao = new PasajeroDAO();
@@ -253,14 +253,14 @@ public class MuberRestController {
 	}
 	
 	@RequestMapping(value = "/viajes/finalizar", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
-	public String finalizar(Integer viajeId) {	
+	public String finalizar(@RequestBody Map<String, Integer> params) {	
 		/*
-		 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/finalizar?viajeId=4
+		 * Probado con Postman {"viajeId":1}
 		 */
 		Map<String, Object> aMap = new HashMap<String, Object>();
-		if  (viajeId != null) {
+		if  (params.get("viajeId") != null) {
 			ViajeDAO dao = new ViajeDAO();
-			if (dao.finalizarViaje(viajeId)){
+			if (dao.finalizarViaje(params.get("viajeId"))){
 				aMap.put("Result", "Viaje Fianlizado");
 			}else{
 				aMap.put("Result", "Error, no existe viaje abierto con el id ingresado");

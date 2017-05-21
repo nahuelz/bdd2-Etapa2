@@ -69,7 +69,7 @@ public class Main {
 		
 		Pasajero pasajero4 = new Pasajero("Hugo", "123456", new Date(), 2300);
 		
-		pasajero3.cargarCredito(4000);
+		pasajero3.cargarCredito(4000.0);
 		viaje2.addPasajero(pasajero3);
 		viaje2.addPasajero(pasajero4);
 		
