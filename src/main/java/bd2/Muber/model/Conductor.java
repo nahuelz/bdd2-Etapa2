@@ -43,11 +43,15 @@ public class Conductor extends Usuario {
 	public Float puntajePromedio() {
 		if (this.getViajes().isEmpty()) return (float) 0;
 		float promedio = 0;
+		int cantViajes = 0;
 		Set<Viaje> viajes = this.getViajes();
 		for (Viaje viaje : viajes ) {
-			promedio = promedio + viaje.puntajePromedio();
+			if (viaje.getComentarios().size() != 0){
+				cantViajes ++;
+				promedio = promedio + viaje.puntajePromedio();
+			}
 		}
-		return promedio/viajes.size();
+		return promedio/cantViajes;
 	}
 
 }

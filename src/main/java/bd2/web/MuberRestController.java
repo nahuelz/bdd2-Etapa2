@@ -206,7 +206,7 @@ public class MuberRestController {
 			mapAtributos.put("password", c.getPassword());
 			mapAtributos.put("fechaVencimientoLic", c.getFechaVencimientoLic());
 			mapAtributos.put("fechaIngreso", c.getFechaIngreso());
-			mapAtributos.put("puntajePromedio", c.getPuntajePromedio());
+			mapAtributos.put("puntajePromedio", Double.toString(c.getPuntajePromedio()));
 			mapConductores.put(c.getIdUsuario(), new LinkedHashMap<String, Object>(mapAtributos));
 		}
 		mapAll.put("result", "OK");
